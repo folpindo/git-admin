@@ -1,0 +1,37 @@
+#!/bin/env python
+
+"""
+git-receive-pack - Needs write access
+    Eg. for git clone:
+	    git-upload-pack 'git-repositories/sample.git'
+git upload-pack  - Needs read access
+    Eg. for git push:
+	    git-receive-pack 'git-repositories/sample.git'
+
+Below will not be used on the initial release.
+
+git upload-archive - Needs archive access
+    Eg. for git archive:
+	git-upload-pack 'git-repositories/sample.git'
+"""
+
+import sys, os
+from subprocess import Popen, PIPE, call
+
+argv = sys.argv
+user = argv[1]
+
+"""
+1. Get user info from the git user database.
+2. Get the permission needed for the operation based on the SSH_ORIGINAL_COMMAND variable.
+3. Execute the command below if the user has permission.
+	
+    exec git-shell -c "$SSH_ORIGINAL_COMMAND"
+4. Before the execution of the command above log the operation which will be executed.
+"""
+
+cmd_arg = os.environ['SSH_ORIGINAL_COMMAND']
+cmd = "exec git shell -c %s" % cmd_arg
+exec_git_shell = Popen(["/usr/bin/git","shell","-c",cmd_arg],stderr=PIPE)
+exec_git_shell.communicate()[1]
+exec_git_shell.stderr.close()
