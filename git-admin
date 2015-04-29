@@ -20,6 +20,7 @@ from subprocess import Popen, PIPE, call
 
 argv = sys.argv
 user = argv[1]
+os.environ["REMOTE_USER"] = user
 
 """
 1. Get user info from the git user database.
